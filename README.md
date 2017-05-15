@@ -119,7 +119,34 @@ aws iam put-role-policy \
         --policy-document file:///tmp/iam-policy_for_es_snapshot_to_s3.json
 ```
  - Register Snapshot
-
+    Note that: only the user has access to the role can register s3 bucket
+    Use the following script to register (CLI does not support signing)
 ```
+from boto.connection import AWSAuthConnection
+
+class ESConnection(AWSAuthConnection):
+
+    def __init__(self, region, **kwargs):
+        super(ESConnection, self).__init__(**kwargs)
+        self._set_auth_region_name(region)
+        self._set_auth_service_name("es")
+
+    def _required_auth_capability(self):
+        return ['hmac-v4']
+
+if __name__ == "__main__":
+
+    client = ESConnection(
+            region='ap-southeast-2',
+            host='search-<>-<>.ap-southeast-2.es.amazonaws.com',
+            aws_access_key_id=os.environ['ESTEST_AWS_ACCESS_KEY_ID'],
+            aws_secret_access_key=os.environ['ESTEST_AWS_SECRET_ACCESS_KEY'],
+            is_secure=False)
+    print 'Registering Snapshot Repository'
+    resp = client.make_request(method='POST',
+            path='/_snapshot/weblogs-index-backups',
+            data='{"type": "s3","settings": { "bucket": "<bucketname>","region": "ap-southeast-2","role_arn": "arn:aws:iam::<account>:role/<rolename>"}}')
+    body = resp.read()
+    print body
  ```
 
