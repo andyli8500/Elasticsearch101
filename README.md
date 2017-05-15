@@ -160,7 +160,7 @@ if __name__ == "__main__":
  ```
  
  ### Reverse Proxy
- ##### Use proxy to simplify request signing [Github resources]ttps://github.com/abutaha/aws-es-proxy]
+ ##### Use proxy to simplify request signing [Github resources](https://github.com/abutaha/aws-es-proxy]
  
  
  
