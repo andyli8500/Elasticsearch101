@@ -43,7 +43,7 @@ aws es update-elasticsearch-domain-config --domain-name test --access-policies '
   ]
 }
 ```
-3. Resource-based (e.g. allow specific account)
+3. Resource-based (e.g. allow specific account with only read access)
 ```sh
 {
   "Version": "2012-10-17",
@@ -58,7 +58,7 @@ aws es update-elasticsearch-domain-config --domain-name test --access-policies '
       "Action": [
         "es:*"
       ],
-      "Resource": "arn:aws:es:ap-southeast-2:<account>:domain/test/*"
+      "Resource": "arn:aws:es:ap-southeast-2:<account>:domain/test/describe*"
     }
   ]
 }
