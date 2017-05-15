@@ -119,7 +119,7 @@ aws iam put-role-policy \
         --policy-document file:///tmp/iam-policy_for_es_snapshot_to_s3.json
 ```
  - Register Snapshot
-Note that: only the user has access to the role can register s3 bucket Use the following script to register (CLI does not support signing)
+ > Note that: only the user has access to the role can register s3 bucket Use the following script to register (CLI does not support signing)
 ```
 from boto.connection import AWSAuthConnection
 
@@ -138,8 +138,8 @@ if __name__ == "__main__":
     client = ESConnection(
             region='ap-southeast-2',
             host='search-<>-<>.ap-southeast-2.es.amazonaws.com',
-            aws_access_key_id=os.environ['ESTEST_AWS_ACCESS_KEY_ID'],
-            aws_secret_access_key=os.environ['ESTEST_AWS_SECRET_ACCESS_KEY'],
+            aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+            aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
             is_secure=False)
     print 'Registering Snapshot Repository'
     resp = client.make_request(method='POST',
@@ -148,4 +148,20 @@ if __name__ == "__main__":
     body = resp.read()
     print body
  ```
+ 
+ - Make a snapshot
+ ```
+ curl -XPUT 'http://<Elasticsearch_domain_endpoint>/_snapshot/snapshot_repository/snapshot_name'
+ ```
+ 
+ - Make restore
+ ```
+ curl -XPOST 'http://<Elasticsearch_domain_endpoint>/_snapshot/snapshot_repository/snapshot_name/_restore'
+ ```
+ 
+ ### Reverse Proxy
+ ##### Use proxy to simplify request signing [Github resources]ttps://github.com/abutaha/aws-es-proxy]
+ 
+ 
+ 
 
