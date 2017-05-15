@@ -161,5 +161,101 @@ if __name__ == "__main__":
  
  ### Reverse Proxy
  ##### Use proxy to simplify request signing [Github resources](https://github.com/abutaha/aws-es-proxy)
+ Run the following to start the proxy.
+ ```sh
+ ./aws-es-proxy -endpoint https://test-es-somerandomvalue.eu-west-1.es.amazonaws.com
+ ```
+ The above proxy listen at port 9200, to change to port 8080:
+ ```sh
+ ./aws-es-proxy -listen 8080 -endpoint https://test-es-somerandomvalue.eu-west-1.es.amazonaws.com
+ or
+ ./aws-es-proxy -listen 127.0.0.1:8080 -endpoint ...
+ ```
  
+ ##### Set IAM to allow or deny access to different users
+ In your access policy of Elasticsearch Service,
+ ```json
+ {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::123456789012:user/<user>"
+      },
+      "Action": "es:*",
+      "Resource": "arn:aws:es:us-west-2:123456789012:domain/mydomain/*"
+    }
+  ]
+}
+ ```
  
+### Automate data upload to Elasticsearch using Firehose
+1. Create a Firehose delivery stream. Reuse the Firehose template, but including the following:
+ ```json
+    ...
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Action": [
+        "es:DescribeElasticsearchDomain",
+        "es:DescribeElasticsearchDomains",
+        "es:DescribeElasticsearchDomainConfig",
+        "es:ESHttpPost",
+        "es:ESHttpPut"
+      ],
+      "Resource": [
+        "arn:aws:es:us-east-1:563402962900:domain/esdomain",
+        "arn:aws:es:us-east-1:563402962900:domain/esdomain/*"
+      ]
+    },
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Action": [
+        "es:ESHttpGet"
+      ],
+      "Resource": [
+        "arn:aws:es:us-east-1:563402962900:domain/esdomain/_all/_settings",
+        "arn:aws:es:us-east-1:563402962900:domain/esdomain/_cluster/stats",
+        "arn:aws:es:us-east-1:563402962900:domain/esdomain/movies*/_mapping/string",
+        "arn:aws:es:us-east-1:563402962900:domain/esdomain/_nodes",
+        "arn:aws:es:us-east-1:563402962900:domain/esdomain/_nodes/stats",
+        "arn:aws:es:us-east-1:563402962900:domain/esdomain/_nodes/*/stats",
+        "arn:aws:es:us-east-1:563402962900:domain/esdomain/_stats",
+        "arn:aws:es:us-east-1:563402962900:domain/esdomain/movies*/_stats"
+      ]
+    }
+    ...
+```
+
+2. Use AWS SDK write data to Firehose:
+```python
+import boto3
+import sys
+import json
+import decimal
+
+
+def put_record(client, fname):
+    with open(fname) as fin:
+        raw_data = json.load(fin)
+
+        for i, record in enumerate(raw_data):
+            print('Processing', i)
+            movie = json.dumps(record, ensure_ascii=False)
+            client.put_record(DeliveryStreamName='es-deliver', Record={'Data': movie})
+            
+
+def main():
+    client = boto3.client('firehose', region_name='us-east-1')
+    fname = sys.argv[1]
+
+    put_record(client, fname)
+
+
+if __name__ == '__main__':
+    main()
+
+```
