@@ -119,8 +119,7 @@ aws iam put-role-policy \
         --policy-document file:///tmp/iam-policy_for_es_snapshot_to_s3.json
 ```
  - Register Snapshot
-    Note that: only the user has access to the role can register s3 bucket
-    Use the following script to register (CLI does not support signing)
+Note that: only the user has access to the role can register s3 bucket Use the following script to register (CLI does not support signing)
 ```
 from boto.connection import AWSAuthConnection
 
