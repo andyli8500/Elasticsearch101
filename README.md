@@ -43,7 +43,7 @@ aws es update-elasticsearch-domain-config --domain-name test --access-policies '
   ]
 }
 ```
-3. Resource-based (allow specific account)
+3. Resource-based (e.g. allow specific account)
 ```sh
 {
   "Version": "2012-10-17",
