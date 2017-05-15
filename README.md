@@ -118,5 +118,8 @@ aws iam put-role-policy \
         --policy-name "$ESTEST_MANUAL_SNAPSHOT_IAM_POLICY_NAME" \
         --policy-document file:///tmp/iam-policy_for_es_snapshot_to_s3.json
 ```
- 
+ - Register Snapshot
+
+```
+ ```
 
