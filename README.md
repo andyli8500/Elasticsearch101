@@ -259,3 +259,39 @@ if __name__ == '__main__':
     main()
 
 ```
+
+### Logstash
+##### Install Logstash in EC2 instance
+- Install Java 8
+```sh
+cd ~
+wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jdk-8u60-linux-x64.rpm"
+```
+Then
+```sh
+sudo yum localinstall jdk-8u60-linux-x64.rpm
+```
+Set `JAVA_HOME`
+```sh
+export JAVA_HOME=/usr/java/jdk1.8.9_60
+```
+- install `rake` and `bundler`
+```
+gem install rake
+gem install bundler
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
