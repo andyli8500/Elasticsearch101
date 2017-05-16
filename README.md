@@ -281,6 +281,39 @@ gem install rake
 gem install bundler
 ```
 
+- install ruby version 1.7.x
+```sh
+gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+\curl -sSL https://get.rvm.io | bash -s stable --ruby=jruby-1.7.26
+```
+
+- build logstash & install default plugin
+```
+git clone https://github.com/elastic/logstash.git
+rake bootstrap
+rake rake plugin:install-default
+```
+- install logstash-output-aws-es plugin
+```
+git clone https://github.com/awslabs/logstash-output-amazon_es.git
+gem build logstash-output-amazon_es.gemspec
+<logstash-home>/bin/logstash-plugin install logstash-output-amazon_es-0.2.0-java.gem
+```
+- add the configuration into `/etc/logstash/conf.d/logstash.conf`
+```
+output {
+    amazon_es {
+        hosts => ["foo.us-east-1.es.amazonaws.com"]
+        region => "us-east-1"
+		# aws_access_key_id, aws_secret_access_key optional if instance profile is configured
+		aws_access_key_id => 'ACCESS_KEY'
+		aws_secret_access_key => 'SECRET_KEY'
+		index => "logstash-1"
+	}
+}
+```
+
+
 
 
 
