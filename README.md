@@ -301,6 +301,14 @@ gem build logstash-output-amazon_es.gemspec
 ```
 - add the configuration into `/etc/logstash/conf.d/logstash.conf`
 ```
+input {
+    heartbeat {
+        message => "epoch"
+        interval => 5
+        type => "heartbeat"
+    }
+}
+
 output {
     amazon_es {
         hosts => ["foo.us-east-1.es.amazonaws.com"]
